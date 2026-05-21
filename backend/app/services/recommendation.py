@@ -14,10 +14,13 @@ VIBE_FIELD_MAP = {
     "digital_nomad": "digital_nomad_score",
     "food": "food_score",
     "culture": "culture_score",
-    "hidden_gems": "hidden_gem_score",
     "hidden_gem": "hidden_gem_score",
     "luxury": "luxury_score",
 }
+
+BUDGET_MATCH_BONUS = 0.8
+TRAVELER_MATCH_BONUS = 0.5
+SOLO_SAFETY_BONUS = 0.7
 
 
 def collect_descendant_ids(db: Session, scope_location_id: int) -> set[int]:
@@ -43,9 +46,9 @@ def compute_score(vibe_profile: LocationVibeProfile, vibes: list[str], traveler_
             scores.append(getattr(vibe_profile, field, 0.0))
     base = sum(scores) / max(len(scores), 1)
 
-    budget_bonus = 0.8 if budget == vibe_profile.average_budget_level else 0.0
-    traveler_bonus = 0.5 if traveler_type in {"digital_nomad", "solo"} and vibe_profile.digital_nomad_score > 6 else 0.0
-    safety_bonus = 0.7 if traveler_type in {"solo", "girls_trip"} and vibe_profile.safety_score > 7 else 0.0
+    budget_bonus = BUDGET_MATCH_BONUS if budget == vibe_profile.average_budget_level else 0.0
+    traveler_bonus = TRAVELER_MATCH_BONUS if traveler_type in {"digital_nomad", "solo"} and vibe_profile.digital_nomad_score > 6 else 0.0
+    safety_bonus = SOLO_SAFETY_BONUS if traveler_type in {"solo", "girls_trip"} and vibe_profile.safety_score > 7 else 0.0
     return round(base + budget_bonus + traveler_bonus + safety_bonus, 2)
 
 

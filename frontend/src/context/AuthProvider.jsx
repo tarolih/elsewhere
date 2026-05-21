@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { apiFetch } from '../api/client'
-import { AuthContext } from './authContext'
+import { AuthContext } from './AuthContext'
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem('elsewhere_token'))
